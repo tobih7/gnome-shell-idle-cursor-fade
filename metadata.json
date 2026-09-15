@@ -1,7 +1,7 @@
 {
-  "uuid": "hide-cursor-idle-fade@tobi",
-  "name": "Hide Cursor During Idle Fade",
-  "description": "Hides the mouse cursor while GNOME fades the screen to black after becoming idle.",
+  "uuid": "idle-cursor-fade@tobih7",
+  "name": "Idle Cursor Fade",
+  "description": "Fades the mouse cursor together with the screen when GNOME becomes idle.",
   "shell-version": ["50"],
-  "url": "https://github.com/tobih7/GNOME-hide-cursor-idle-fade"
+  "url": "https://github.com/tobih7/gnome-shell-idle-cursor-fade"
 }
