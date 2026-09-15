@@ -96,24 +96,24 @@ export default class IdleCursorFadeExtension extends Extension {
         let y = point.y - Math.round(hotY * scale);
 
         // Match the pixel alignment used by Mutter's cursor renderer.
-        const view = global.stage.peek_stage_views().find(stageView => {
-            const { layout } = stageView;
+        // const view = global.stage.peek_stage_views().find(stageView => {
+        //     const { layout } = stageView;
 
-            return (
-                point.x >= layout.x &&
-                point.x <  layout.x + layout.width &&
-                point.y >= layout.y &&
-                point.y <  layout.y + layout.height
-            );
-        });
+        //     return (
+        //         point.x >= layout.x &&
+        //         point.x <  layout.x + layout.width &&
+        //         point.y >= layout.y &&
+        //         point.y <  layout.y + layout.height
+        //     );
+        // });
 
-        if (view) {
-            const { layout } = view;
-            const viewScale = view.get_scale();
+        // if (view) {
+        //     const { layout } = view;
+        //     const viewScale = view.get_scale();
 
-            x = layout.x + Math.floor((x - layout.x) * viewScale) / viewScale;
-            y = layout.y + Math.floor((y - layout.y) * viewScale) / viewScale;
-        }
+        //     x = layout.x + Math.floor((x - layout.x) * viewScale) / viewScale;
+        //     y = layout.y + Math.floor((y - layout.y) * viewScale) / viewScale;
+        // }
 
         // Keep a snapshot so the cursor stays unchanged while fading out.
         const context = sprite.get_context();
@@ -141,6 +141,16 @@ export default class IdleCursorFadeExtension extends Extension {
             height: sprite.get_height() * scale,
             reactive: false,
         });
+        // this._pointerActor = new Clutter.Actor({
+        //     content: Clutter.TextureContent.new_from_texture(texture, null),
+        //     x: point.x,
+        //     y: point.y,
+        //     translation_x: -Math.round(hotX * scale),
+        //     translation_y: -Math.round(hotY * scale),
+        //     width: sprite.get_width() * scale,
+        //     height: sprite.get_height() * scale,
+        //     reactive: false,
+        // });
 
         Main.uiGroup.add_child(this._pointerActor);
         Main.uiGroup.set_child_below_sibling(this._pointerActor, this._lightbox);
