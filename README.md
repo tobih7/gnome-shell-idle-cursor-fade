@@ -1,32 +1,46 @@
-# Hide Cursor During Idle Fade
+# Idle Cursor Fade
 
-A GNOME Shell extension that hides the mouse cursor while GNOME fades the
-screen to black after becoming idle. Cursor visibility is restored when the
-fade ends or the extension is disabled.
+A GNOME Shell extension that fades the mouse cursor together with the screen when GNOME becomes idle.
+
+GNOME Shell's idle fade does not normally affect the cursor, as the cursor is rendered separately by Mutter. This extension temporarily replaces the real cursor with a fake cursor when the idle fade starts, allowing it to fade out with the rest of the screen.
 
 ## Compatibility
 
 - GNOME Shell 50
 - No additional runtime dependencies or settings
 
-The extension uses GNOME Shell's internal `Main.screenShield._longLightbox`
-object. Support can therefore break depending on GNOME version.
+## Installation
 
-## Install locally
+Build and install the extension:
 
 ```sh
-./build.sh
-gnome-extensions install --force build/hide-cursor-idle-fade@tobi.shell-extension.zip
+make install
 ```
 
-Log out and back in so GNOME Shell loads the installed code, then enable it:
+Then log out and back and enable it:
 
 ```sh
-gnome-extensions enable hide-cursor-idle-fade@tobi
+gnome-extensions enable idle-cursor-fade@tobih7
 ```
 
 To disable it:
 
 ```sh
-gnome-extensions disable hide-cursor-idle-fade@tobi
+gnome-extensions disable idle-cursor-fade@tobih7
 ```
+
+## Testing
+
+To trigger the idle fade manually, open Looking Glass (press `Alt+F2`, then enter `lg`) and run:
+
+```js
+GLib.timeout_add_once(GLib.PRIORITY_DEFAULT, 5000, () =>
+  Main.screenShield._onStatusChanged(3),
+);
+```
+
+This starts the idle fade after five seconds, which makes it easier to test the cursor transition without waiting for the normal idle timeout.
+
+## License
+
+GPL-2.0-or-later
