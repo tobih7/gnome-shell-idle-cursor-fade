@@ -1,7 +1,7 @@
 UUID = idle-cursor-fade@tobih7
 ZIP = build/$(UUID).shell-extension.zip
 
-.PHONY: build install clean
+.PHONY: build install test clean
 
 build:
 	mkdir -p build
