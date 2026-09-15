@@ -49,6 +49,8 @@ export default class HideCursorIdleFadeExtension extends Extension {
         this._cursorTracker.inhibit_cursor_visibility();
 
         this._cursorInhibited = true;
+
+        this._createCursorActor();
     }
 
     _showCursor() {
@@ -61,5 +63,55 @@ export default class HideCursorIdleFadeExtension extends Extension {
         seat.uninhibit_unfocus();
 
         this._cursorInhibited = false;
+
+        this._destroyPointerActor();
+    }
+
+    _createCursorActor() {
+        if (!this._cursorTracker.get_pointer_visible())
+            return;
+
+        const sprite = this._cursorTracker.get_sprite();
+        if (!sprite)
+            return;
+
+        const [point] = this._cursorTracker.get_pointer();
+        const [hotX, hotY] = this._cursorTracker.get_hot();
+        const scale = this._cursorTracker.get_scale();
+        let x = point.x - hotX * scale;
+        let y = point.y - hotY * scale;
+
+        // Match the pixel alignment used by Mutter's cursor renderer.
+        const view = global.stage.get_view_at(point.x, point.y);
+        if (view) {
+            const layout = view.get_layout();
+            const viewScale = view.get_scale();
+            x = layout.x + Math.floor((x - layout.x) * viewScale) / viewScale;
+            y = layout.y + Math.floor((y - layout.y) * viewScale) / viewScale;
+        }
+
+        // Keep a snapshot, as the client may update the cursor during the fade.
+        const context = sprite.get_context();
+        const texture = Cogl.Texture2D.new_with_size(context,
+            sprite.get_width(), sprite.get_height());
+        const offscreen = Cogl.Offscreen.new_with_texture(texture);
+        offscreen.clear4f(Cogl.BufferBit.COLOR, 0, 0, 0, 0);
+        const pipeline = Cogl.Pipeline.new(context);
+        pipeline.set_layer_texture(0, sprite);
+        offscreen.draw_textured_rectangle(pipeline, -1, 1, 1, -1, 0, 0, 1, 1);
+
+        this._pointerActor = new Clutter.Actor({
+            content: Clutter.TextureContent.new_from_texture(texture, null),
+            x,
+            y,
+            width: sprite.get_width() * scale,
+            height: sprite.get_height() * scale,
+        });
+        Main.uiGroup.add_child(this._pointerActor);
+    }
+
+    _destroyPointerActor() {
+        this._pointerActor?.destroy();
+        this._pointerActor = null;
     }
 }
